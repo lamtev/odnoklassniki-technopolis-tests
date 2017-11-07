@@ -1,5 +1,6 @@
 package tests;
 
+import core.ApplicationManager;
 import org.junit.After;
 import org.junit.Before;
 
