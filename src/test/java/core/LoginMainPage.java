@@ -4,10 +4,14 @@ import model.TestBot;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-public class SessionHelper extends HelperBase{
+public class LoginMainPage extends HelperBase{
 
-    public SessionHelper(WebDriver driver) {
+    public LoginMainPage(WebDriver driver) {
         super(driver);
+    }
+
+    protected void check() {
+        //todo
     }
 
     public void doLogin(TestBot testBot) {

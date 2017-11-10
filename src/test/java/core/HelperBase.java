@@ -2,13 +2,16 @@ package core;
 
 import org.openqa.selenium.*;
 
-public class HelperBase {
+public abstract class HelperBase {
     protected WebDriver driver;
     private boolean acceptNextAlert = true;
 
     public HelperBase(WebDriver driver) {
         this.driver = driver;
+        check();
     }
+
+    protected abstract void check();
 
     protected void type(String text, By locator) {
         driver.findElement(locator).clear();
@@ -19,7 +22,7 @@ public class HelperBase {
         driver.findElement(locator).click();
     }
 
-    private boolean isElementPresent(By by) {
+    protected boolean isElementPresent(By by) {
         try {
             driver.findElement(by);
             return true;
@@ -28,7 +31,7 @@ public class HelperBase {
         }
     }
 
-    private boolean isAlertPresent() {
+    protected boolean isAlertPresent() {
         try {
             driver.switchTo().alert();
             return true;
@@ -37,7 +40,7 @@ public class HelperBase {
         }
     }
 
-    private String closeAlertAndGetItsText() {
+    protected String closeAlertAndGetItsText() {
         try {
             Alert alert = driver.switchTo().alert();
             String alertText = alert.getText();

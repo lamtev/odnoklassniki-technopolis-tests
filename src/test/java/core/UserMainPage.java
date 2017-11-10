@@ -3,10 +3,14 @@ package core;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-public class UserMainPageHelper extends HelperBase{
+public class UserMainPage extends HelperBase{
 
-    public UserMainPageHelper(WebDriver driver) {
+    public UserMainPage(WebDriver driver) {
         super(driver);
+    }
+
+    protected void check() {
+        //todo
     }
 
     public void clickGroupsOnToolbar() {
