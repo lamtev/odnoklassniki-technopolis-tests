@@ -16,16 +16,17 @@ public class GroupMainPage extends HelperBase{
     }
 
     protected void check() {
-        //пример использования метода из HelperBase
-        (new WebDriverWait(driver, 10)).until(new ExpectedCondition<Boolean>() {
+        //пример использования метода isElementVisible из HelperBase
+        Assert.assertTrue( "Не дождались кнопки созданиия новой группы",
+                new WebDriverWait(driver, 10).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
-                return isElementPresent(CREATE_NEW_GROUP);
+                return isElementVisible(CREATE_NEW_GROUP);
             }
-        });
+        }));
 
-        //пример использования класса ExpectedConditions
-        (new WebDriverWait(driver, 10))
-                .until(ExpectedConditions.visibilityOfElementLocated(CREATE_NEW_GROUP));
+        //пример использования класса ExpectedConditions в сочетании с методом explicitWait из HelperBase
+        Assert.assertTrue("Не дождались кнопки созданиия новой группы",
+                explicitWait(ExpectedConditions.visibilityOfElementLocated(CREATE_NEW_GROUP), 10, 500));
     }
 
     public void clickCreateButton() {
