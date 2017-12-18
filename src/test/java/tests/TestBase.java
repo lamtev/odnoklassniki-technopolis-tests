@@ -1,4 +1,4 @@
-package core;
+package tests;
 
 import org.junit.After;
 import org.junit.Before;
@@ -11,9 +11,10 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.fail;
 
 public class TestBase {
+
+    protected WebDriver driver;
     private String baseUrl;
     private StringBuffer verificationErrors = new StringBuffer();
-    protected WebDriver driver;
 
     @Before
     public void setUp() throws Exception {
@@ -27,7 +28,7 @@ public class TestBase {
 
     public void init() {
         driver = new ChromeDriver();
-        driver.manage().window().setSize(new Dimension(1600,1200));
+        driver.manage().window().setSize(new Dimension(1600, 1200));
         baseUrl = "https://ok.ru/";
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.get(baseUrl + "/");

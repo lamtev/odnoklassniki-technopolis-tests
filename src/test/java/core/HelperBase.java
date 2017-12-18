@@ -1,13 +1,23 @@
 package core;
 
 import com.google.common.base.Preconditions;
+import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.assertTrue;
+
+@SuppressWarnings("WeakerAccess")
 public abstract class HelperBase {
+
+    private static final By USER_CARD = By.xpath("//*[contains(@class, 'ucard-mini') and contains(@class, 'toolbar_ucard')]");
+    private static final By LOGOUT_BUTTON = By.xpath("//*[contains(@data-l, 't,logoutCurrentUser')]");
+    private static final By LOGOUT_CONFIRM = By.xpath("//*[contains(@data-l, 't,confirm') and contains(@value, 'Выйти')]");
+
     protected WebDriver driver;
     private boolean acceptNextAlert = true;
 
@@ -25,6 +35,26 @@ public abstract class HelperBase {
 
     protected void click(By locator) {
         driver.findElement(locator).click();
+    }
+
+    protected void checkAndType(String text, By locator) {
+        assertTrue(isElementPresent(locator));
+        type(text, locator);
+    }
+
+    protected void selectOptionByVisibleText(By locator, String visibleText) {
+        final Select select = new Select(driver.findElement(locator));
+        select.selectByVisibleText(visibleText);
+    }
+
+    public LoginMainPage doLogout() {
+        Assert.assertTrue("Не найдена иконка пользователя в тулбаре", isElementPresent(USER_CARD));
+        click(USER_CARD);
+        Assert.assertTrue("Не найдена кнопка выхода", isElementPresent(LOGOUT_BUTTON));
+        click(LOGOUT_BUTTON);
+        Assert.assertTrue("Не найдена кнопка подтверждения выхода", isElementPresent(LOGOUT_CONFIRM));
+        click(LOGOUT_CONFIRM);
+        return new LoginMainPage(driver);
     }
 
     protected boolean isElementVisible(By by) {
@@ -87,8 +117,9 @@ public abstract class HelperBase {
             if (driver != null) {
                 driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
             } else {
-                throw new IllegalArgumentException("Driver shouldnt be null");
-            }        }
+                throw new IllegalArgumentException("Driver shouldn't be null");
+            }
+        }
     }
 
     /**
