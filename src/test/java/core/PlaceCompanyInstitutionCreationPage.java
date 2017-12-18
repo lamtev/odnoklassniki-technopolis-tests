@@ -15,11 +15,13 @@ import static org.openqa.selenium.By.id;
 public class PlaceCompanyInstitutionCreationPage extends AbstractGroupCreationPage {
 
     private static final By FIELD_SUBCATEGORY = id("field_pageMixedCategory");
+    private static final By FIELD_AGE_RESTRICTION = id("field_ageRestriction");
 
     private static final List<By> X_PATHS = Arrays.asList(
             FIELD_NAME,
             FIELD_DESCRIPTION, HOOK_FORM_BUTTON_BUTTON_CREATE,
-            FIELD_SUBCATEGORY
+            FIELD_SUBCATEGORY,
+            FIELD_AGE_RESTRICTION
     );
 
     public PlaceCompanyInstitutionCreationPage(WebDriver driver) {
@@ -48,6 +50,12 @@ public class PlaceCompanyInstitutionCreationPage extends AbstractGroupCreationPa
     public PlaceCompanyInstitutionCreationPage selectSubcategory(String subcategoryVisibleText) {
         assertTrue(isElementPresent(FIELD_SUBCATEGORY));
         selectOptionByVisibleText(FIELD_SUBCATEGORY, subcategoryVisibleText);
+        return this;
+    }
+
+    public PlaceCompanyInstitutionCreationPage selectAgeRestriction18plus() {
+        assertTrue(isElementPresent(FIELD_AGE_RESTRICTION));
+        selectOptionByVisibleText(FIELD_AGE_RESTRICTION, "От 18 и старше");
         return this;
     }
 

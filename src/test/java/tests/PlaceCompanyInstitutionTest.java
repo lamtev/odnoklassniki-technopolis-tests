@@ -1,6 +1,9 @@
 package tests;
 
-import core.*;
+import core.GroupsMainPage;
+import core.LoginMainPage;
+import core.PlaceCompanyInstitutionCreationPage;
+import core.UserMainPage;
 import org.junit.Test;
 import org.openqa.selenium.TimeoutException;
 
@@ -32,6 +35,9 @@ public class PlaceCompanyInstitutionTest extends TestBase {
                 .typeDescription("Description")
                 .selectSubcategory("Культура и искусство")
                 .clickCreateButton()
+                /*Чтобы счетчик групп изменился, нужно перелогиниться
+                  Долго не понимал, почему тест падает.
+                  На мой взгляд, странно*/
                 .doLogout()
                 .doLogin(BOT);
 
@@ -61,4 +67,29 @@ public class PlaceCompanyInstitutionTest extends TestBase {
                 .selectSubcategory("Культура и искусство")
                 .clickCreateButton();
     }
+
+    /**
+     * За бота, которому нет 18 лет осуществляется попытка создать
+     * место с возрастными ограничениями 18+.
+     *
+     * На мой взгляд, не должно быть возможным сделать такое.
+     * Но реально -- можно.
+     * Тест не выполняется.
+     */
+    @Test(expected = TimeoutException.class)
+    public void test18plusPlaceCreationBy18MinusPerson() {
+        UserMainPage userMainPage = new LoginMainPage(driver).doLogin(BOT);
+
+        GroupsMainPage groupsMainPage = userMainPage.clickGroupsOnToolbar();
+        groupsMainPage.clickCreateGroup();
+
+        PlaceCompanyInstitutionCreationPage page = groupsMainPage.clickPlaceCompanyInstitution();
+        final String name = "Place" + currentTimeMillis();
+        page.typeName(name)
+                .typeDescription("Description")
+                .selectSubcategory("Культура и искусство")
+                .selectAgeRestriction18plus()
+                .clickCreateButton();
+    }
+
 }
