@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 import static org.openqa.selenium.By.xpath;
 
 @SuppressWarnings("WeakerAccess")
-public class GroupsMainPage extends HelperBase {
+public final class GroupsMainPage extends HelperBase {
 
     private static final By CREATE_NEW_GROUP_XPATH = xpath(".//*[contains(@href,'st.layer.cmd=PopLayerCreateAltGroup')]");
     private static final By EVENT_XPATH = xpath(".//*[contains(@class,'create-group-dialog_img __event')]");

@@ -5,7 +5,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class CreatedGroupPage extends HelperBase {
+public final class CreatedGroupPage extends HelperBase {
 
     private static final By GROUP_TITLE = By.xpath("//*[contains(@class,'mctc_name_tx')]");
 

@@ -9,7 +9,7 @@ import static org.openqa.selenium.By.id;
 import static org.openqa.selenium.By.xpath;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
-public class LoginMainPage extends HelperBase {
+public final class LoginMainPage extends HelperBase {
 
     private static final String LOGIN_FIELD = "field_email";
     private static final String PASSWORD_FIELD = "field_password";

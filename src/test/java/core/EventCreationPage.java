@@ -24,8 +24,6 @@ public class EventCreationPage extends AbstractGroupCreationPage {
     private static final By FIELD_WEBSITE = id("field_website");
     private static final By FIELD_CATEGORY = id("field_category");
 
-    private static final By ANY_ERROR_MESSAGE = xpath("//*[contains(@class, 'input-e')]");
-
     private static final List<By> X_PATHS = Arrays.asList(
             FIELD_NAME, FIELD_START_DATE,
             FIELD_CITY, FIELD_ADDRESS,
@@ -48,12 +46,14 @@ public class EventCreationPage extends AbstractGroupCreationPage {
 
     @Override
     public EventCreationPage typeName(String name) {
-        return (EventCreationPage) super.typeName(name);
+        super.typeName(name);
+        return this;
     }
 
     @Override
     public EventCreationPage typeDescription(String description) {
-        return (EventCreationPage) super.typeDescription(description);
+        super.typeDescription(description);
+        return this;
     }
 
     public EventCreationPage typeStartDate(String date) {
@@ -99,15 +99,6 @@ public class EventCreationPage extends AbstractGroupCreationPage {
         assertTrue(isElementPresent(HOOK_FORM_BUTTON_BUTTON_CREATE));
         click(HOOK_FORM_BUTTON_BUTTON_CREATE);
         return null;
-    }
-
-    public boolean hasErrorMessage() {
-        try {
-            driver.findElement(ANY_ERROR_MESSAGE);
-            return true;
-        } catch (NoSuchElementException e) {
-            return false;
-        }
     }
 
 }
