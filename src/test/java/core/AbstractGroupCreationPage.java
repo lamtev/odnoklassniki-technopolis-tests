@@ -3,21 +3,31 @@ package core;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static java.util.Arrays.asList;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.Assert.assertTrue;
 import static org.openqa.selenium.By.id;
 import static org.openqa.selenium.By.xpath;
+import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 public abstract class AbstractGroupCreationPage extends HelperBase {
 
-    static final By FIELD_NAME = id("field_name");
-    static final By FIELD_DESCRIPTION = id("field_description");
-    static final By HOOK_FORM_BUTTON_BUTTON_CREATE = id("hook_FormButton_button_create");
+    static final Map<By, String> CHECK_MAP = new HashMap<>();
+    private static final String FIELD_NAME_STR = "field_name";
+    private static final By FIELD_NAME = id(FIELD_NAME_STR);
+    private static final String FIELD_DESCRIPTION_STR = "field_description";
+    private static final By FIELD_DESCRIPTION = id(FIELD_DESCRIPTION_STR);
+    private static final String BUTTON_CREATE_STR = "hook_FormButton_button_create";
+    static final By BUTTON_CREATE = id(BUTTON_CREATE_STR);
     private static final By ANY_ERROR_MESSAGE = xpath("//*[contains(@class, 'input-e')]");
 
+    static {
+        CHECK_MAP.put(FIELD_NAME, FIELD_NAME_STR);
+        CHECK_MAP.put(FIELD_DESCRIPTION, FIELD_DESCRIPTION_STR);
+        CHECK_MAP.put(BUTTON_CREATE, BUTTON_CREATE_STR);
+    }
 
     AbstractGroupCreationPage(WebDriver driver) {
         super(driver);
@@ -25,13 +35,10 @@ public abstract class AbstractGroupCreationPage extends HelperBase {
 
     @Override
     protected void check() {
-        asList(FIELD_NAME, FIELD_DESCRIPTION, HOOK_FORM_BUTTON_BUTTON_CREATE).forEach(
-                it -> assertTrue(
-                        "Не дождались появления поля" + it.toString(),
-                        new WebDriverWait(driver, 10)
-                                .until((ExpectedCondition<Boolean>) d -> isElementVisible(it))
-                )
-        );
+        CHECK_MAP.forEach((locator, text) -> assertTrue(
+                "Не дождались появления поля" + text + " в объекте " + toString(),
+                explicitWait(visibilityOfElementLocated(locator), 5, 500)
+        ));
     }
 
     public AbstractGroupCreationPage typeName(String name) {
@@ -45,8 +52,8 @@ public abstract class AbstractGroupCreationPage extends HelperBase {
     }
 
     public CreatedGroupPage clickCreateButton() {
-        assertTrue(isElementPresent(HOOK_FORM_BUTTON_BUTTON_CREATE));
-        click(HOOK_FORM_BUTTON_BUTTON_CREATE);
+        assertTrue(isElementPresent(BUTTON_CREATE));
+        click(BUTTON_CREATE);
         return new CreatedGroupPage(driver);
     }
 

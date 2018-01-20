@@ -2,27 +2,27 @@ package core;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 import static org.openqa.selenium.By.id;
+import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 @SuppressWarnings("WeakerAccess")
 public class PlaceCompanyInstitutionCreationPage extends AbstractGroupCreationPage {
 
-    private static final By FIELD_SUBCATEGORY = id("field_pageMixedCategory");
-    private static final By FIELD_AGE_RESTRICTION = id("field_ageRestriction");
+    private static final String FIELD_SUBCATEGORY_STR = "field_pageMixedCategory";
+    private static final By FIELD_SUBCATEGORY = id(FIELD_SUBCATEGORY_STR);
+    private static final String FIELD_AGE_RESTRICTION_STR = "field_ageRestriction";
+    private static final By FIELD_AGE_RESTRICTION = id(FIELD_AGE_RESTRICTION_STR);
+    private static final Map<By, String> CHECK_MAP = new HashMap<>(AbstractGroupCreationPage.CHECK_MAP);
 
-    private static final List<By> X_PATHS = Arrays.asList(
-            FIELD_NAME,
-            FIELD_DESCRIPTION, HOOK_FORM_BUTTON_BUTTON_CREATE,
-            FIELD_SUBCATEGORY,
-            FIELD_AGE_RESTRICTION
-    );
+    static {
+        CHECK_MAP.put(FIELD_SUBCATEGORY, FIELD_SUBCATEGORY_STR);
+        CHECK_MAP.put(FIELD_AGE_RESTRICTION, FIELD_AGE_RESTRICTION_STR);
+    }
 
     public PlaceCompanyInstitutionCreationPage(WebDriver driver) {
         super(driver);
@@ -30,21 +30,22 @@ public class PlaceCompanyInstitutionCreationPage extends AbstractGroupCreationPa
 
     @Override
     protected void check() {
-        X_PATHS.forEach(it -> assertTrue(
-                "Не дождались появления поля" + it.toString(),
-                new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) d -> isElementVisible(it))
+        CHECK_MAP.forEach((locator, text) -> assertTrue(
+                "Не дождались появления поля " + text + " в объекте " + toString(),
+                explicitWait(visibilityOfElementLocated(locator), 5, 500)
         ));
     }
 
     @Override
     public PlaceCompanyInstitutionCreationPage typeName(String name) {
-        return (PlaceCompanyInstitutionCreationPage) super.typeName(name);
+        super.typeName(name);
+        return this;
     }
-
 
     @Override
     public PlaceCompanyInstitutionCreationPage typeDescription(String description) {
-        return (PlaceCompanyInstitutionCreationPage) super.typeDescription(description);
+        super.typeDescription(description);
+        return this;
     }
 
     public PlaceCompanyInstitutionCreationPage selectSubcategory(String subcategoryVisibleText) {

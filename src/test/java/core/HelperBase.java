@@ -7,9 +7,11 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertTrue;
+import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class HelperBase {
@@ -137,4 +139,5 @@ public abstract class HelperBase {
         Preconditions.checkState(millisecondsBetweenChecks < (maxCheckTimeInSeconds * 1000),
                 "Millis between checks must be less than max seconds to wait");
     }
+
 }

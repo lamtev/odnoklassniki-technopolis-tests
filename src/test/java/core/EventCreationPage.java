@@ -1,36 +1,43 @@
 package core;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 import static org.openqa.selenium.By.id;
-import static org.openqa.selenium.By.xpath;
+import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 @SuppressWarnings("WeakerAccess")
 public class EventCreationPage extends AbstractGroupCreationPage {
 
-    private static final By FIELD_START_DATE = id("field_startDate");
-    private static final By FIELD_END_DATE = id("field_endDate");
-    private static final By FIELD_CITY = id("field_city");
-    private static final By FIELD_ADDRESS = id("field_address");
-    private static final By FIELD_PHONE = id("field_phone");
-    private static final By FIELD_WEBSITE = id("field_website");
-    private static final By FIELD_CATEGORY = id("field_category");
+    private static final String FIELD_START_DATE_STR = "field_startDate";
+    private static final By FIELD_START_DATE = id(FIELD_START_DATE_STR);
+    private static final String FIELD_END_DATE_STR = "field_endDate";
+    private static final By FIELD_END_DATE = id(FIELD_END_DATE_STR);
+    private static final String FIELD_CITY_STR = "field_city";
+    private static final By FIELD_CITY = id(FIELD_CITY_STR);
+    private static final String FIELD_ADDRESS_STR = "field_address";
+    private static final By FIELD_ADDRESS = id(FIELD_ADDRESS_STR);
+    private static final String FIELD_PHONE_STR = "field_phone";
+    private static final By FIELD_PHONE = id(FIELD_PHONE_STR);
+    private static final String FIELD_WEBSITE_STR = "field_website";
+    private static final By FIELD_WEBSITE = id(FIELD_WEBSITE_STR);
+    private static final String FIELD_CATEGORY_STR = "field_category";
+    private static final By FIELD_CATEGORY = id(FIELD_CATEGORY_STR);
+    private static final Map<By, String> CHECK_MAP = new HashMap<>(AbstractGroupCreationPage.CHECK_MAP);
 
-    private static final List<By> X_PATHS = Arrays.asList(
-            FIELD_NAME, FIELD_START_DATE,
-            FIELD_CITY, FIELD_ADDRESS,
-            FIELD_PHONE, FIELD_WEBSITE,
-            FIELD_DESCRIPTION, HOOK_FORM_BUTTON_BUTTON_CREATE,
-            FIELD_CATEGORY
-    );
+    static {
+        CHECK_MAP.put(FIELD_START_DATE, FIELD_START_DATE_STR);
+        CHECK_MAP.put(FIELD_END_DATE, FIELD_END_DATE_STR);
+        CHECK_MAP.put(FIELD_CITY, FIELD_CITY_STR);
+        CHECK_MAP.put(FIELD_ADDRESS, FIELD_ADDRESS_STR);
+        CHECK_MAP.put(FIELD_PHONE, FIELD_PHONE_STR);
+        CHECK_MAP.put(FIELD_WEBSITE, FIELD_WEBSITE_STR);
+        CHECK_MAP.put(FIELD_CATEGORY, FIELD_CATEGORY_STR);
+    }
 
     public EventCreationPage(WebDriver driver) {
         super(driver);
@@ -38,9 +45,9 @@ public class EventCreationPage extends AbstractGroupCreationPage {
 
     @Override
     protected void check() {
-        X_PATHS.forEach(it -> assertTrue(
-                "Не дождались появления поля" + it.toString(),
-                new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) d -> isElementVisible(it))
+        CHECK_MAP.forEach((locator, text) -> assertTrue(
+                "Не дождались появления поля" + text + " в объекте " + toString(),
+                explicitWait(visibilityOfElementLocated(locator), 5, 500)
         ));
     }
 
@@ -96,8 +103,8 @@ public class EventCreationPage extends AbstractGroupCreationPage {
 
     @Override
     public CreatedGroupPage clickCreateButton() {
-        assertTrue(isElementPresent(HOOK_FORM_BUTTON_BUTTON_CREATE));
-        click(HOOK_FORM_BUTTON_BUTTON_CREATE);
+        assertTrue(isElementPresent(BUTTON_CREATE));
+        click(BUTTON_CREATE);
         return null;
     }
 
