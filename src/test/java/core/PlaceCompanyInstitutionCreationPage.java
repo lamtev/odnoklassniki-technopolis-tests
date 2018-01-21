@@ -6,13 +6,17 @@ import org.openqa.selenium.WebDriver;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.System.currentTimeMillis;
 import static org.junit.Assert.assertTrue;
 import static org.openqa.selenium.By.id;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 @SuppressWarnings("WeakerAccess")
-public class PlaceCompanyInstitutionCreationPage extends AbstractGroupCreationPage {
+public final class PlaceCompanyInstitutionCreationPage extends AbstractGroupCreationPage {
 
+
+    public static final String DEFAULT_DESCRIPTION = "description";
+    public static final String DEFAULT_SUBCATEGORY = "Культура и искусство";
     private static final String FIELD_SUBCATEGORY_STR = "field_pageMixedCategory";
     private static final By FIELD_SUBCATEGORY = id(FIELD_SUBCATEGORY_STR);
     private static final String FIELD_AGE_RESTRICTION_STR = "field_ageRestriction";
@@ -32,7 +36,7 @@ public class PlaceCompanyInstitutionCreationPage extends AbstractGroupCreationPa
     protected void check() {
         CHECK_MAP.forEach((locator, text) -> assertTrue(
                 "Не дождались появления поля " + text + " в объекте " + toString(),
-                explicitWait(visibilityOfElementLocated(locator), 5, 500)
+                explicitWait(driver, visibilityOfElementLocated(locator), 5, 500)
         ));
     }
 
@@ -40,6 +44,11 @@ public class PlaceCompanyInstitutionCreationPage extends AbstractGroupCreationPa
     public PlaceCompanyInstitutionCreationPage typeName(String name) {
         super.typeName(name);
         return this;
+    }
+
+    @Override
+    public PlaceCompanyInstitutionCreationPage typeRandomName() {
+        return typeName("Theatre" + currentTimeMillis());
     }
 
     @Override
@@ -59,5 +68,6 @@ public class PlaceCompanyInstitutionCreationPage extends AbstractGroupCreationPa
         selectOptionByVisibleText(FIELD_AGE_RESTRICTION, "От 18 и старше");
         return this;
     }
+
 
 }

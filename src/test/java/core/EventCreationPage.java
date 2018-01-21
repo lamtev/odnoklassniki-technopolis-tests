@@ -6,13 +6,19 @@ import org.openqa.selenium.WebDriver;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.System.currentTimeMillis;
 import static org.junit.Assert.assertTrue;
 import static org.openqa.selenium.By.id;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 @SuppressWarnings("WeakerAccess")
-public class EventCreationPage extends AbstractGroupCreationPage {
+public final class EventCreationPage extends AbstractGroupCreationPage {
 
+    public static final String DEFAULT_DESCRIPTION = "Description";
+    public static final String DEFAULT_CATEGORY = "Кино";
+    public static final String DEFAULT_ADDRESS = "Tverskaya 10";
+    public static final String DEFAULT_PHONE = "1234567890";
+    public static final String DEFAULT_WEBSITE = "www.x.com";
     private static final String FIELD_START_DATE_STR = "field_startDate";
     private static final By FIELD_START_DATE = id(FIELD_START_DATE_STR);
     private static final String FIELD_END_DATE_STR = "field_endDate";
@@ -31,7 +37,6 @@ public class EventCreationPage extends AbstractGroupCreationPage {
 
     static {
         CHECK_MAP.put(FIELD_START_DATE, FIELD_START_DATE_STR);
-        CHECK_MAP.put(FIELD_END_DATE, FIELD_END_DATE_STR);
         CHECK_MAP.put(FIELD_CITY, FIELD_CITY_STR);
         CHECK_MAP.put(FIELD_ADDRESS, FIELD_ADDRESS_STR);
         CHECK_MAP.put(FIELD_PHONE, FIELD_PHONE_STR);
@@ -55,6 +60,11 @@ public class EventCreationPage extends AbstractGroupCreationPage {
     public EventCreationPage typeName(String name) {
         super.typeName(name);
         return this;
+    }
+
+    @Override
+    public EventCreationPage typeRandomName() {
+        return typeName("Event" + currentTimeMillis());
     }
 
     @Override
@@ -99,13 +109,6 @@ public class EventCreationPage extends AbstractGroupCreationPage {
     public EventCreationPage typeWebsite(String website) {
         checkAndType(website, FIELD_WEBSITE);
         return this;
-    }
-
-    @Override
-    public CreatedGroupPage clickCreateButton() {
-        assertTrue(isElementPresent(BUTTON_CREATE));
-        click(BUTTON_CREATE);
-        return null;
     }
 
 }

@@ -2,16 +2,16 @@ package core;
 
 import com.google.common.base.Preconditions;
 import org.junit.Assert;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertTrue;
-import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class HelperBase {
@@ -20,87 +20,14 @@ public abstract class HelperBase {
     private static final By LOGOUT_BUTTON = By.xpath("//*[contains(@data-l, 't,logoutCurrentUser')]");
     private static final By LOGOUT_CONFIRM = By.xpath("//*[contains(@data-l, 't,confirm') and contains(@value, 'Выйти')]");
 
-    protected WebDriver driver;
-    private boolean acceptNextAlert = true;
+    protected final WebDriver driver;
 
     public HelperBase(WebDriver driver) {
         this.driver = driver;
         check();
     }
 
-    protected abstract void check();
-
-    protected void type(String text, By locator) {
-        driver.findElement(locator).clear();
-        driver.findElement(locator).sendKeys(text);
-    }
-
-    protected void click(By locator) {
-        driver.findElement(locator).click();
-    }
-
-    protected void checkAndType(String text, By locator) {
-        assertTrue(isElementPresent(locator));
-        type(text, locator);
-    }
-
-    protected void selectOptionByVisibleText(By locator, String visibleText) {
-        final Select select = new Select(driver.findElement(locator));
-        select.selectByVisibleText(visibleText);
-    }
-
-    public LoginMainPage doLogout() {
-        Assert.assertTrue("Не найдена иконка пользователя в тулбаре", isElementPresent(USER_CARD));
-        click(USER_CARD);
-        Assert.assertTrue("Не найдена кнопка выхода", isElementPresent(LOGOUT_BUTTON));
-        click(LOGOUT_BUTTON);
-        Assert.assertTrue("Не найдена кнопка подтверждения выхода", isElementPresent(LOGOUT_CONFIRM));
-        click(LOGOUT_CONFIRM);
-        return new LoginMainPage(driver);
-    }
-
-    protected boolean isElementVisible(By by) {
-        try {
-            return driver.findElement(by).isDisplayed();
-        } catch (NoSuchElementException e) {
-            return false;
-        }
-    }
-
-    protected boolean isElementPresent(By by) {
-        try {
-            driver.findElement(by);
-            return true;
-        } catch (NoSuchElementException e) {
-            return false;
-        }
-    }
-
-    protected boolean isAlertPresent() {
-        try {
-            driver.switchTo().alert();
-            return true;
-        } catch (NoAlertPresentException e) {
-            return false;
-        }
-    }
-
-    protected String closeAlertAndGetItsText() {
-        try {
-            Alert alert = driver.switchTo().alert();
-            String alertText = alert.getText();
-            if (acceptNextAlert) {
-                alert.accept();
-            } else {
-                alert.dismiss();
-            }
-            return alertText;
-        } finally {
-            acceptNextAlert = true;
-        }
-    }
-
-    public boolean explicitWait(final ExpectedCondition<?> condition, long maxCheckTimeInSeconds, long millisecondsBetweenChecks) {
+    public static boolean explicitWait(final WebDriver driver, final ExpectedCondition<?> condition, long maxCheckTimeInSeconds, long millisecondsBetweenChecks) {
         Preconditions.checkNotNull(condition, "Condition must be not null");
         Preconditions.checkArgument(TimeUnit.MINUTES.toSeconds(3) > maxCheckTimeInSeconds, "Max check time in seconds should be less than 3 minutes");
         checkConditionTimeouts(maxCheckTimeInSeconds, millisecondsBetweenChecks);
@@ -133,11 +60,63 @@ public abstract class HelperBase {
      * @param maxCheckTimeInSeconds     максимальное время проверки в секундах
      * @param millisecondsBetweenChecks интервал между проверками в милисекундах
      */
-    private void checkConditionTimeouts(long maxCheckTimeInSeconds, long millisecondsBetweenChecks) {
+    private static void checkConditionTimeouts(long maxCheckTimeInSeconds, long millisecondsBetweenChecks) {
         Preconditions.checkState(maxCheckTimeInSeconds > 0, "maximum check time in seconds must be not 0");
         Preconditions.checkState(millisecondsBetweenChecks > 0, "milliseconds count between checks must be not 0");
         Preconditions.checkState(millisecondsBetweenChecks < (maxCheckTimeInSeconds * 1000),
                 "Millis between checks must be less than max seconds to wait");
+    }
+
+    protected abstract void check();
+
+    protected void type(String text, By locator) {
+        driver.findElement(locator).clear();
+        driver.findElement(locator).sendKeys(text);
+    }
+
+    protected void click(By locator) {
+        driver.findElement(locator).click();
+    }
+
+    protected void checkAndType(String text, By locator) {
+        assertTrue(isElementVisible(locator));
+        type(text, locator);
+    }
+
+    protected void selectOptionByVisibleText(By locator, String visibleText) {
+        final Select select = new Select(driver.findElement(locator));
+        select.selectByVisibleText(visibleText);
+    }
+
+    public LoginMainPage doLogout() {
+        Assert.assertTrue("Не найдена иконка пользователя в тулбаре", isElementVisible(USER_CARD));
+        click(USER_CARD);
+        Assert.assertTrue("Не найдена кнопка выхода", isElementVisible(LOGOUT_BUTTON));
+        click(LOGOUT_BUTTON);
+        Assert.assertTrue("Не найдена кнопка подтверждения выхода", isElementVisible(LOGOUT_CONFIRM));
+        click(LOGOUT_CONFIRM);
+        return new LoginMainPage(driver);
+    }
+
+    protected boolean isElementVisible(By by) {
+        try {
+            return driver.findElement(by).isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    protected boolean isElementPresent(By by) {
+        try {
+            driver.findElement(by);
+            return true;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    public boolean explicitWait(final ExpectedCondition<?> condition, long maxCheckTimeInSeconds, long millisecondsBetweenChecks) {
+        return explicitWait(driver, condition, maxCheckTimeInSeconds, millisecondsBetweenChecks);
     }
 
 }

@@ -1,7 +1,6 @@
 package core;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 
 import java.util.HashMap;
@@ -9,7 +8,6 @@ import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 import static org.openqa.selenium.By.id;
-import static org.openqa.selenium.By.xpath;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 public abstract class AbstractGroupCreationPage extends HelperBase {
@@ -20,8 +18,7 @@ public abstract class AbstractGroupCreationPage extends HelperBase {
     private static final String FIELD_DESCRIPTION_STR = "field_description";
     private static final By FIELD_DESCRIPTION = id(FIELD_DESCRIPTION_STR);
     private static final String BUTTON_CREATE_STR = "hook_FormButton_button_create";
-    static final By BUTTON_CREATE = id(BUTTON_CREATE_STR);
-    private static final By ANY_ERROR_MESSAGE = xpath("//*[contains(@class, 'input-e')]");
+    private static final By BUTTON_CREATE = id(BUTTON_CREATE_STR);
 
     static {
         CHECK_MAP.put(FIELD_NAME, FIELD_NAME_STR);
@@ -46,24 +43,17 @@ public abstract class AbstractGroupCreationPage extends HelperBase {
         return this;
     }
 
+    public abstract AbstractGroupCreationPage typeRandomName();
+
     public AbstractGroupCreationPage typeDescription(String description) {
         checkAndType(description, FIELD_DESCRIPTION);
         return this;
     }
 
-    public CreatedGroupPage clickCreateButton() {
+    public CreatedGroupPromise clickCreateButton() {
         assertTrue(isElementPresent(BUTTON_CREATE));
         click(BUTTON_CREATE);
-        return new CreatedGroupPage(driver);
-    }
-
-    public boolean hasErrorMessage() {
-        try {
-            driver.findElement(ANY_ERROR_MESSAGE);
-            return true;
-        } catch (NoSuchElementException e) {
-            return false;
-        }
+        return new CreatedGroupPromise(driver);
     }
 
 }

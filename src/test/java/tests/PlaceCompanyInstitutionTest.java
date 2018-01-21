@@ -5,9 +5,9 @@ import core.LoginMainPage;
 import core.PlaceCompanyInstitutionCreationPage;
 import core.UserMainPage;
 import org.junit.Test;
-import org.openqa.selenium.TimeoutException;
 
-import static java.lang.System.currentTimeMillis;
+import static core.PlaceCompanyInstitutionCreationPage.DEFAULT_DESCRIPTION;
+import static core.PlaceCompanyInstitutionCreationPage.DEFAULT_SUBCATEGORY;
 import static org.testng.AssertJUnit.assertEquals;
 import static tests.Utils.BOT;
 
@@ -27,17 +27,13 @@ public class PlaceCompanyInstitutionTest extends TestBase {
         final int groupsBeforeCreation = userMainPage.groupsCounter();
 
         GroupsMainPage groupsMainPage = userMainPage.clickGroupsOnToolbar();
-        groupsMainPage.clickCreateGroup();
+        final PlaceCompanyInstitutionCreationPage page = groupsMainPage.clickCreateGroup().clickPlaceCompanyInstitution();
 
-        PlaceCompanyInstitutionCreationPage page = groupsMainPage.clickPlaceCompanyInstitution();
-        final String name = "Theatre" + currentTimeMillis();
-        userMainPage = page.typeName(name)
-                .typeDescription("Description")
-                .selectSubcategory("Культура и искусство")
+        userMainPage = page.typeRandomName()
+                .typeDescription(DEFAULT_DESCRIPTION)
+                .selectSubcategory(DEFAULT_SUBCATEGORY)
                 .clickCreateButton()
-                /*Чтобы счетчик групп изменился, нужно перелогиниться
-                  Долго не понимал, почему тест падает.
-                  На мой взгляд, странно*/
+                .andGroupWasCreatedSuccessfully()
                 .doLogout()
                 .doLogin(BOT);
 
@@ -50,46 +46,18 @@ public class PlaceCompanyInstitutionTest extends TestBase {
     /**
      * Осуществляется попытка созать новое место.
      * При создании не указывается название, и место не создаётся.
-     * Появляется сообщение об ошибке, проходит время и бросается
-     * исключение TimeoutException в методе AbstractGroupPage#clickCreateButton().
-     * Тест ожидает выброса данного исключения, и если оно случается, то
-     * тест считается успешно выполненным.
+     * Тест проверяет, что место не создалось и
+     * появилось сообщение об ошибке.
      */
-    @Test(expected = TimeoutException.class)
+    @Test
     public void testUnsuccessfulCreation() {
         UserMainPage userMainPage = new LoginMainPage(driver).doLogin(BOT);
-
         GroupsMainPage groupsMainPage = userMainPage.clickGroupsOnToolbar();
-        groupsMainPage.clickCreateGroup();
-
-        PlaceCompanyInstitutionCreationPage page = groupsMainPage.clickPlaceCompanyInstitution();
-        page.typeDescription("Description")
-                .selectSubcategory("Культура и искусство")
-                .clickCreateButton();
-    }
-
-    /**
-     * За бота, которому нет 18 лет осуществляется попытка создать
-     * место с возрастными ограничениями 18+.
-     * <p>
-     * На мой взгляд, не должно быть возможным сделать такое.
-     * Но реально -- можно.
-     * Тест не выполняется.
-     */
-    @Test(expected = TimeoutException.class)
-    public void test18plusPlaceCreationBy18MinusPerson() {
-        UserMainPage userMainPage = new LoginMainPage(driver).doLogin(BOT);
-
-        GroupsMainPage groupsMainPage = userMainPage.clickGroupsOnToolbar();
-        groupsMainPage.clickCreateGroup();
-
-        PlaceCompanyInstitutionCreationPage page = groupsMainPage.clickPlaceCompanyInstitution();
-        final String name = "Place" + currentTimeMillis();
-        page.typeName(name)
-                .typeDescription("Description")
-                .selectSubcategory("Культура и искусство")
-                .selectAgeRestriction18plus()
-                .clickCreateButton();
+        PlaceCompanyInstitutionCreationPage page = groupsMainPage.clickCreateGroup().clickPlaceCompanyInstitution();
+        page.typeDescription(DEFAULT_DESCRIPTION)
+                .selectSubcategory(DEFAULT_SUBCATEGORY)
+                .clickCreateButton()
+                .andGroupWasNotCreatedForNSeconds(5);
     }
 
 }
